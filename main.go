@@ -44,6 +44,7 @@ out:
 	for {
 		select {
 		case <-c:
+			log.Println("Shutting down...")
 			break out
 		}
 	}
