@@ -1,4 +1,4 @@
-package data
+package main
 
 import (
 	"time"
@@ -24,7 +24,7 @@ type CommandDefinition struct {
 	gorm.Model
 	CommandID            string `gorm:"primary_key"`
 	Enabled              bool
-	Triggers             []string
+	Triggers             []string `gorm:"type:text[]"`
 	PermissionLevel      string
 	ParameterDefinitions []CommandParameterDefinition `gorm:"foreignKey:CommandID"`
 	LastModifiedDateUtc  time.Time
@@ -59,12 +59,12 @@ func (r *CommandRepository) GetAll() ([]*CommandDefinition, error) {
 	return commandDefinitions, nil
 }
 
-func (r *CommandRepository) Update(commandDefinition CommandDefinition) (*CommandDefinition, error) {
-	if err := r.db.Save(&commandDefinition).Error; err != nil {
+func (r *CommandRepository) Update(commandDefinition *CommandDefinition) (*CommandDefinition, error) {
+	if err := r.db.Save(commandDefinition).Error; err != nil {
 		return nil, err
 	}
 
-	return &commandDefinition, nil
+	return commandDefinition, nil
 }
 
 func (r *CommandRepository) Create(commandDefinition CommandDefinition) (*CommandDefinition, error) {

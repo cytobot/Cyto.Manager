@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	cydata "./lib/data"
 	pb "github.com/cytobot/rpc/manager"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -13,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewManagerServer(repository *cydata.CommandRepository) *grpc.Server {
+func NewManagerServer(repository *CommandRepository) *grpc.Server {
 	managerServer := &managerServer{
 		repository: repository,
 	}
@@ -24,7 +23,7 @@ func NewManagerServer(repository *cydata.CommandRepository) *grpc.Server {
 
 type managerServer struct {
 	pb.UnimplementedManagerServer
-	repository *cydata.CommandRepository
+	repository *CommandRepository
 }
 
 func (s *managerServer) GetCommandDefinitions(ctx context.Context, req *empty.Empty) (*pb.CommandDefinitionList, error) {
@@ -72,7 +71,7 @@ func mapToProtoPermissionLevel(permissionLevel string) pb.CommandDefinition_Perm
 	return pb.CommandDefinition_PermissionLevel(protoEnumValue)
 }
 
-func mapToProtoParameterDefinition(commandParameterDefinitions []cydata.CommandParameterDefinition) []*pb.CommandParameterDefinition {
+func mapToProtoParameterDefinition(commandParameterDefinitions []CommandParameterDefinition) []*pb.CommandParameterDefinition {
 	protoParameterDefinitions := make([]*pb.CommandParameterDefinition, 0)
 	for _, p := range commandParameterDefinitions {
 		protoParameterDefinitions = append(protoParameterDefinitions, &pb.CommandParameterDefinition{

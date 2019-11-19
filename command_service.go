@@ -1,39 +1,52 @@
 package main
 
-import (
-	cydata "./lib/data"
-)
+func (s *managerState) getAllCommandDefinitions() ([]*CommandDefinition, error) {
+	commandDefinitions, err := s.data.CommandRepository.GetAll()
 
-func (s *managerState) getAllCommandDefinitions() ([]cydata.CommandDefinition, error) {
-	commandDefinitions := make([]cydata.CommandDefinition, 0)
+	return commandDefinitions, err
+}
 
-	return commandDefinitions, nil
+func (s *managerState) getCommandDefinition(commandID string) (*CommandDefinition, error) {
+	commandDefinition, err := s.data.CommandRepository.Get(commandID)
+
+	return commandDefinition, err
 }
 
 func (s *managerState) disableCommandDefinition(commandID string) error {
-	cd, err := getCommandDefinition(commandID)
-	if err != nil {
-		return err
-	}
-
-	cd.Enabled = false
-
-	return nil
+	return toggleCommandDefinition(s, commandID, false)
 }
 
 func (s *managerState) enableCommandDefinition(commandID string) error {
-	cd, err := getCommandDefinition(commandID)
+	return toggleCommandDefinition(s, commandID, true)
+}
+
+func updateCommandDefinition(s *managerState, updatedDefinition *CommandDefinition) (*CommandDefinition, error) {
+	return s.data.CommandRepository.Update(updatedDefinition)
+}
+
+func toggleCommandDefinition(s *managerState, commandID string, isEnabled bool) error {
+	cd, err := s.getCommandDefinition(commandID)
 	if err != nil {
 		return err
 	}
 
-	cd.Enabled = true
+	cd.Enabled = isEnabled
 
-	return nil
+	_, err = updateCommandDefinition(s, cd)
+	if err != nil {
+		return err
+	}
+
+	err = notifyCommandChange(s)
+
+	return err
 }
 
-func getCommandDefinition(commandID string) (cydata.CommandDefinition, error) {
-	commandDefinition := cydata.CommandDefinition{}
+func notifyCommandChange(s *managerState) error {
+	commandDefinitions, err := s.getAllCommandDefinitions()
+	if err != nil {
+		return err
+	}
 
-	return commandDefinition, nil
+	return s.nats.notifyCommandConfigChange(commandDefinitions)
 }

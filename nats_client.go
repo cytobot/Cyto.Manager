@@ -11,17 +11,17 @@ type NatsClient struct {
 	client *nats.Conn
 }
 
-func NewNatsClient(endpoint string) *NatsClient {
+func NewNatsClient(endpoint string) (*NatsClient, error) {
 	client, err := nats.Connect(endpoint)
-	defer client.Drain()
-
 	if err != nil {
-		panic("Unable to connect to nats")
+		return nil, err
 	}
+
+	defer client.Drain()
 
 	return &NatsClient{
 		client: client,
-	}
+	}, nil
 }
 
 func (c *NatsClient) Publish(subject string, msg interface{}) error {

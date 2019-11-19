@@ -2,16 +2,14 @@ package main
 
 import (
 	"time"
-
-	"./lib/data"
 )
 
 type cytoCommandConfigUpdate struct {
 	Timestamp          time.Time
-	CommandDefinitions []data.CommandDefinition
+	CommandDefinitions []*CommandDefinition
 }
 
-func (c *NatsClient) notifyCommandConfigChange(updatedCommandDefinitions []data.CommandDefinition) error {
+func (c *NatsClient) notifyCommandConfigChange(updatedCommandDefinitions []*CommandDefinition) error {
 	natsUpdate := &cytoCommandConfigUpdate{
 		Timestamp:          time.Now(),
 		CommandDefinitions: updatedCommandDefinitions,

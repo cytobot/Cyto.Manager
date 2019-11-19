@@ -1,8 +1,8 @@
-package data
+package main
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type DatabaseClient struct {
@@ -10,8 +10,8 @@ type DatabaseClient struct {
 	CommandRepository *CommandRepository
 }
 
-func NewDatabaseClient(dialect string, connectionString string) (*DatabaseClient, error) {
-	db, err := gorm.Open(dialect, connectionString)
+func NewDatabaseClient(connectionString string) (*DatabaseClient, error) {
+	db, err := gorm.Open("postgres", connectionString)
 	if err != nil {
 		return nil, err
 	}

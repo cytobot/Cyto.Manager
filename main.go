@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 
-	cydata "./lib/data"
 	"google.golang.org/grpc"
 )
 
@@ -16,16 +15,11 @@ const VERSION = "0.1.0"
 
 type managerState struct {
 	nats       *NatsClient
-	data       *cydata.DatabaseClient
+	data       *DatabaseClient
 	grpcServer *grpc.Server
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 5000))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
 	dbClient := getDatabaseClient()
 
 	manager := &managerState{
@@ -34,7 +28,14 @@ func main() {
 		grpcServer: NewManagerServer(dbClient.CommandRepository),
 	}
 
-	manager.grpcServer.Serve(lis)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 5000))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	go manager.grpcServer.Serve(lis)
+
+	log.Println("Started successfully")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
@@ -55,20 +56,29 @@ func getNatsClient() *NatsClient {
 		panic("No nats endpoint provided.")
 	}
 
-	return NewNatsClient(natsEndpoint)
+	client, err := NewNatsClient(natsEndpoint)
+	if err != nil {
+		panic(fmt.Sprintf("[NATS error] %s", err))
+	}
+
+	log.Println("Connected to NATS")
+
+	return client
 }
 
-func getDatabaseClient() *cydata.DatabaseClient {
+func getDatabaseClient() *DatabaseClient {
 	connectionString := os.Getenv("DBConnectionString")
 
 	if connectionString == "" {
 		panic("No database connection string provided.")
 	}
 
-	client, err := cydata.NewDatabaseClient("sqlite3", connectionString)
+	client, err := NewDatabaseClient(connectionString)
 	if err != nil {
 		panic(fmt.Sprintf("[Database error] %s", err))
 	}
+
+	log.Println("Connected to database")
 
 	return client
 }
