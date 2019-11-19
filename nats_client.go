@@ -17,7 +17,7 @@ func NewNatsClient(endpoint string) (*NatsClient, error) {
 		return nil, err
 	}
 
-	defer client.Drain()
+	//defer client.Drain()
 
 	return &NatsClient{
 		client: client,

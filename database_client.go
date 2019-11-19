@@ -15,7 +15,7 @@ func NewDatabaseClient(connectionString string) (*DatabaseClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	commandRepository, err := NewCommandRepository(db)
 	if err != nil {
