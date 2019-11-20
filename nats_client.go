@@ -2,13 +2,21 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"time"
 
 	nats "github.com/nats-io/nats.go"
 )
 
 type NatsClient struct {
-	client *nats.Conn
+	client        *nats.Conn
+	subscriptions []*nats.Subscription
+}
+
+type HealthMessage struct {
+	ID        string
+	Timestamp time.Time
 }
 
 func NewNatsClient(endpoint string) (*NatsClient, error) {
@@ -24,6 +32,7 @@ func NewNatsClient(endpoint string) (*NatsClient, error) {
 	}, nil
 }
 
+//Publish sends a message to subject subscriptions
 func (c *NatsClient) Publish(subject string, msg interface{}) error {
 	bytes, err := json.Marshal(msg)
 
@@ -40,4 +49,28 @@ func (c *NatsClient) Publish(subject string, msg interface{}) error {
 	}
 
 	return nil
+}
+
+//Subscribe to a nats subject
+func (c *NatsClient) Subscribe(subject string) <-chan *nats.Msg {
+	channel := make(chan *nats.Msg, 1)
+
+	sub, err := c.client.ChanSubscribe(subject, channel)
+
+	if err != nil {
+		panic(fmt.Sprintf("[NATS client error] %s", err))
+	}
+
+	c.subscriptions = append(c.subscriptions, sub)
+
+	return channel
+}
+
+//Shutdown gracefull cleans up subscriptions and the client
+func (c *NatsClient) Shutdown() {
+	for _, sub := range c.subscriptions {
+		sub.Drain()
+	}
+
+	c.client.Drain()
 }

@@ -34,6 +34,7 @@ func main() {
 	}
 
 	go manager.grpcServer.Serve(lis)
+	go manager.setupHealthCheckListener()
 
 	log.Println("Started successfully")
 
@@ -44,6 +45,7 @@ out:
 	for {
 		select {
 		case <-c:
+			manager.nats.Shutdown()
 			log.Println("Shutting down...")
 			break out
 		}
