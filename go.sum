@@ -11,6 +11,8 @@ github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
+github.com/cytobot/messaging v0.0.0-20191122211147-649eed74ba79 h1:5+isujajZ2oQh9lolpAoD9zg2ea68dEo1IzBC1HttlQ=
+github.com/cytobot/messaging v0.0.0-20191122211147-649eed74ba79/go.mod h1:3aiMtR82jy9rwQgJKrblUUfiyCeqm8IWa/Pq11jye8o=
 github.com/cytobot/rpc v0.0.0-20191017202753-29b4a4073e9d h1:55WkYQXItQ/k0O2FY6huEJ7R+51uro36qxfq748J7hM=
 github.com/cytobot/rpc v0.0.0-20191017202753-29b4a4073e9d/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

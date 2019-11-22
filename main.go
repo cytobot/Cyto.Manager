@@ -14,7 +14,7 @@ import (
 const VERSION = "0.1.0"
 
 type managerState struct {
-	nats       *NatsClient
+	nats       *NatsManager
 	data       *DatabaseClient
 	grpcServer *grpc.Server
 }
@@ -23,7 +23,7 @@ func main() {
 	dbClient := getDatabaseClient()
 
 	manager := &managerState{
-		nats:       getNatsClient(),
+		nats:       getNatsManager(),
 		data:       dbClient,
 		grpcServer: NewManagerServer(dbClient.CommandRepository),
 	}
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	go manager.grpcServer.Serve(lis)
-	go manager.setupHealthCheckListener()
+	go manager.nats.StartHealthCheckListener()
 
 	log.Println("Started successfully")
 
@@ -52,21 +52,21 @@ out:
 	}
 }
 
-func getNatsClient() *NatsClient {
+func getNatsManager() *NatsManager {
 	natsEndpoint := os.Getenv("NatsEndpoint")
 
 	if natsEndpoint == "" {
 		panic("No nats endpoint provided.")
 	}
 
-	client, err := NewNatsClient(natsEndpoint)
+	manager, err := NewNatsManager(natsEndpoint)
 	if err != nil {
 		panic(fmt.Sprintf("[NATS error] %s", err))
 	}
 
 	log.Println("Connected to NATS")
 
-	return client
+	return manager
 }
 
 func getDatabaseClient() *DatabaseClient {

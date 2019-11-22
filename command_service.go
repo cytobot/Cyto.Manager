@@ -48,5 +48,5 @@ func notifyCommandChange(s *managerState) error {
 		return err
 	}
 
-	return s.nats.notifyCommandConfigChange(commandDefinitions)
+	return s.nats.NotifyCommandConfigChange(commandDefinitions)
 }

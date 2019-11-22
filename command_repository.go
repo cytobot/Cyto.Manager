@@ -11,7 +11,7 @@ type CommandRepository struct {
 }
 
 func NewCommandRepository(db *gorm.DB) (*CommandRepository, error) {
-	if err := db.AutoMigrate(&CommandDefinition{}).Error; err != nil {
+	if err := db.AutoMigrate(&CommandDefinition{}, &CommandParameterDefinition{}).Error; err != nil {
 		return nil, err
 	}
 
