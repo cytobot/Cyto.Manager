@@ -11,10 +11,14 @@ github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cytobot/messaging v0.0.0-20191122211147-649eed74ba79 h1:5+isujajZ2oQh9lolpAoD9zg2ea68dEo1IzBC1HttlQ=
-github.com/cytobot/messaging v0.0.0-20191122211147-649eed74ba79/go.mod h1:3aiMtR82jy9rwQgJKrblUUfiyCeqm8IWa/Pq11jye8o=
-github.com/cytobot/rpc v0.0.0-20191017202753-29b4a4073e9d h1:55WkYQXItQ/k0O2FY6huEJ7R+51uro36qxfq748J7hM=
-github.com/cytobot/rpc v0.0.0-20191017202753-29b4a4073e9d/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
+github.com/cytobot/messaging v0.0.0-20191202020637-4ac15b7c9e9e h1:YUuKezylrLL5IMom8ecvkk/0sALRNviQ+9jQ5lFZkjU=
+github.com/cytobot/messaging v0.0.0-20191202020637-4ac15b7c9e9e/go.mod h1:3aiMtR82jy9rwQgJKrblUUfiyCeqm8IWa/Pq11jye8o=
+github.com/cytobot/messaging v0.0.0-20191202021824-3b299c1b7404 h1:OZCwTH+OZ6DNs4NDOA5BNKA29wj2D0ULwBqy3UBJJAA=
+github.com/cytobot/messaging v0.0.0-20191202021824-3b299c1b7404/go.mod h1:3aiMtR82jy9rwQgJKrblUUfiyCeqm8IWa/Pq11jye8o=
+github.com/cytobot/rpc v0.0.0-20191202020433-d4b2852e830d h1:Qr2XAD2m1DpSmKTfl34+LkNPOBhbo711A47l91qu4/M=
+github.com/cytobot/rpc v0.0.0-20191202020433-d4b2852e830d/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
+github.com/cytobot/rpc v0.0.0-20191202022145-949a7a2a797a h1:qZJkkSxTj+QyGNWb5CYMMbRqF6Zm1dDyqRpfCaTnLFg=
+github.com/cytobot/rpc v0.0.0-20191202022145-949a7a2a797a/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisenkom/go-mssqldb v0.0.0-20190515213511-eb9f6a1743f3 h1:tkum0XDgfR0jcVVXuTsYv/erY2NnEDqwRojbxR1rBYA=
 github.com/denisenkom/go-mssqldb v0.0.0-20190515213511-eb9f6a1743f3/go.mod h1:zAg7JM8CkOJ43xKXIj7eRO9kmWm/TW578qo+oDO6tuM=
@@ -42,6 +46,7 @@ github.com/golang/protobuf v1.3.2 h1:6nsPYzhq5kReh6QImI3k5qWzO4PEbvbIW2cwSfR/6xs
 github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
+github.com/google/go-cmp v0.2.0 h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
 github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57/go.mod h1:zfwlbNMJ+OItoe0UupaVj+oy1omPYYDuagoSzA8v9mc=

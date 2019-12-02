@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 )
 
 type CommandRepository struct {
@@ -15,16 +16,23 @@ func NewCommandRepository(db *gorm.DB) (*CommandRepository, error) {
 		return nil, err
 	}
 
-	return &CommandRepository{
+	repo := &CommandRepository{
 		db: db,
-	}, nil
+	}
+
+	if err := repo.seedInitialCommandDefinitions(); err != nil {
+		return nil, err
+	}
+
+	return repo, nil
 }
 
 type CommandDefinition struct {
-	gorm.Model
 	CommandID            string `gorm:"primary_key"`
+	Description          string
 	Enabled              bool
-	Triggers             []string `gorm:"type:text[]"`
+	Unlisted             bool
+	Triggers             pq.StringArray `gorm:"type:text[]"`
 	PermissionLevel      string
 	ParameterDefinitions []CommandParameterDefinition `gorm:"foreignKey:CommandID"`
 	LastModifiedDateUtc  time.Time
@@ -32,7 +40,6 @@ type CommandDefinition struct {
 }
 
 type CommandParameterDefinition struct {
-	gorm.Model
 	CommandID string `gorm:"primary_key"`
 	Name      string `gorm:"primary_key"`
 	Pattern   string
@@ -67,12 +74,12 @@ func (r *CommandRepository) Update(commandDefinition *CommandDefinition) (*Comma
 	return commandDefinition, nil
 }
 
-func (r *CommandRepository) Create(commandDefinition CommandDefinition) (*CommandDefinition, error) {
-	if err := r.db.Create(&commandDefinition).Error; err != nil {
+func (r *CommandRepository) Create(commandDefinition *CommandDefinition) (*CommandDefinition, error) {
+	if err := r.db.Create(commandDefinition).Error; err != nil {
 		return nil, err
 	}
 
-	return &commandDefinition, nil
+	return commandDefinition, nil
 }
 
 func (r *CommandRepository) Delete(commandDefinition CommandDefinition) error {

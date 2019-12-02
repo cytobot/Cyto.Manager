@@ -76,6 +76,8 @@ func convertToProtoCommandDefinitions(commandDefinitions []*CommandDefinition) [
 		newDef := &pbm.CommandDefinition{
 			CommandID:            def.CommandID,
 			Enabled:              def.Enabled,
+			Unlisted:             def.Unlisted,
+			Description:          def.Description,
 			Triggers:             def.Triggers,
 			PermissionLevel:      mapToNatsPermissionLevel(def.PermissionLevel),
 			ParameterDefinitions: mapToNatsParameterDefinition(def.ParameterDefinitions),

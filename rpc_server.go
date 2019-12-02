@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	pb "github.com/cytobot/rpc/manager"
@@ -12,21 +11,21 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewManagerServer(repository *CommandRepository) *grpc.Server {
-	managerServer := &managerServer{
+func NewRpcServer(repository *CommandRepository) *grpc.Server {
+	rpcServer := &rpcServer{
 		repository: repository,
 	}
 	server := grpc.NewServer()
-	pb.RegisterManagerServer(server, managerServer)
+	pb.RegisterManagerServer(server, rpcServer)
 	return server
 }
 
-type managerServer struct {
+type rpcServer struct {
 	pb.UnimplementedManagerServer
 	repository *CommandRepository
 }
 
-func (s *managerServer) GetCommandDefinitions(ctx context.Context, req *empty.Empty) (*pb.CommandDefinitionList, error) {
+func (s *rpcServer) GetCommandDefinitions(ctx context.Context, req *empty.Empty) (*pb.CommandDefinitionList, error) {
 	commandDefintions, err := s.repository.GetAll()
 	if err != nil {
 		return nil, err
@@ -39,6 +38,8 @@ func (s *managerServer) GetCommandDefinitions(ctx context.Context, req *empty.Em
 		pDef := &pb.CommandDefinition{
 			CommandID:            def.CommandID,
 			Enabled:              def.Enabled,
+			Unlisted:             def.Unlisted,
+			Description:          def.Description,
 			Triggers:             def.Triggers,
 			PermissionLevel:      mapToProtoPermissionLevel(def.PermissionLevel),
 			ParameterDefinitions: mapToProtoParameterDefinition(def.ParameterDefinitions),
@@ -53,11 +54,11 @@ func (s *managerServer) GetCommandDefinitions(ctx context.Context, req *empty.Em
 	}, nil
 }
 
-func (s *managerServer) GetGuildCommandConfigurations(ctx context.Context, req *pb.GuildQuery) (*pb.GuildCommandConfigurationList, error) {
+func (s *rpcServer) GetGuildCommandConfigurations(ctx context.Context, req *pb.GuildQuery) (*pb.GuildCommandConfigurationList, error) {
 	return nil, nil
 }
 
-func (s *managerServer) SetGuildCommandConfiguration(ctx context.Context, req *pb.GuildCommandConfiguration) (*pb.GuildCommandConfiguration, error) {
+func (s *rpcServer) SetGuildCommandConfiguration(ctx context.Context, req *pb.GuildCommandConfiguration) (*pb.GuildCommandConfiguration, error) {
 	return nil, nil
 }
 
@@ -77,7 +78,7 @@ func mapToProtoParameterDefinition(commandParameterDefinitions []CommandParamete
 		protoParameterDefinitions = append(protoParameterDefinitions, &pb.CommandParameterDefinition{
 			Name:     p.Name,
 			Pattern:  p.Pattern,
-			Optional: strconv.FormatBool(p.Optional),
+			Optional: p.Optional,
 		})
 	}
 	return protoParameterDefinitions

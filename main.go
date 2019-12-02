@@ -10,10 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// VERSION is the application version
-const VERSION = "0.1.0"
-
-type managerState struct {
+type ManagerState struct {
 	nats       *NatsManager
 	data       *DatabaseClient
 	grpcServer *grpc.Server
@@ -22,10 +19,10 @@ type managerState struct {
 func main() {
 	dbClient := getDatabaseClient()
 
-	manager := &managerState{
+	manager := &ManagerState{
 		nats:       getNatsManager(),
 		data:       dbClient,
-		grpcServer: NewManagerServer(dbClient.CommandRepository),
+		grpcServer: NewRpcServer(dbClient.CommandRepository),
 	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 5000))
