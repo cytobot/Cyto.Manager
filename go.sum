@@ -19,6 +19,8 @@ github.com/cytobot/rpc v0.0.0-20191202020433-d4b2852e830d h1:Qr2XAD2m1DpSmKTfl34
 github.com/cytobot/rpc v0.0.0-20191202020433-d4b2852e830d/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
 github.com/cytobot/rpc v0.0.0-20191202022145-949a7a2a797a h1:qZJkkSxTj+QyGNWb5CYMMbRqF6Zm1dDyqRpfCaTnLFg=
 github.com/cytobot/rpc v0.0.0-20191202022145-949a7a2a797a/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
+github.com/cytobot/rpc v0.0.0-20191203003338-d5b56048e125 h1:fvSpmXfP1rbfAEQbF6WICNgzIaEPqJKxg0oTx/zxkWo=
+github.com/cytobot/rpc v0.0.0-20191203003338-d5b56048e125/go.mod h1:KsA17vzHTw4qs1q4kK3BKuqo/pzQ0gZ7amvyeZqLSrg=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisenkom/go-mssqldb v0.0.0-20190515213511-eb9f6a1743f3 h1:tkum0XDgfR0jcVVXuTsYv/erY2NnEDqwRojbxR1rBYA=
 github.com/denisenkom/go-mssqldb v0.0.0-20190515213511-eb9f6a1743f3/go.mod h1:zAg7JM8CkOJ43xKXIj7eRO9kmWm/TW578qo+oDO6tuM=

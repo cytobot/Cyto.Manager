@@ -11,19 +11,23 @@ import (
 )
 
 type ManagerState struct {
-	nats       *NatsManager
-	data       *DatabaseClient
-	grpcServer *grpc.Server
+	nats          *NatsManager
+	data          *DatabaseClient
+	grpcServer    *grpc.Server
+	healthMonitor *healthMonitor
 }
 
 func main() {
 	dbClient := getDatabaseClient()
+	healthMonitor := NewHealthMonitor()
 
 	manager := &ManagerState{
-		nats:       getNatsManager(),
-		data:       dbClient,
-		grpcServer: NewRpcServer(dbClient.CommandRepository),
+		data:          dbClient,
+		healthMonitor: healthMonitor,
+		grpcServer:    NewRpcServer(dbClient.CommandRepository, healthMonitor),
 	}
+
+	manager.nats = getNatsManager(manager)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 5000))
 	if err != nil {
@@ -49,14 +53,14 @@ out:
 	}
 }
 
-func getNatsManager() *NatsManager {
+func getNatsManager(s *ManagerState) *NatsManager {
 	natsEndpoint := os.Getenv("NatsEndpoint")
 
 	if natsEndpoint == "" {
 		panic("No nats endpoint provided.")
 	}
 
-	manager, err := NewNatsManager(natsEndpoint)
+	manager, err := NewNatsManager(natsEndpoint, s)
 	if err != nil {
 		panic(fmt.Sprintf("[NATS error] %s", err))
 	}

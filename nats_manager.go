@@ -12,17 +12,20 @@ import (
 
 type NatsManager struct {
 	client       *cytonats.NatsClient
-	listenerChan chan int32
+	state        *ManagerState
+	shutdownChan chan int32
 }
 
-func NewNatsManager(endpoint string) (*NatsManager, error) {
+func NewNatsManager(endpoint string, state *ManagerState) (*NatsManager, error) {
 	client, err := cytonats.NewNatsClient(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
 	return &NatsManager{
-		client: client,
+		client:       client,
+		state:        state,
+		shutdownChan: make(chan int32),
 	}, nil
 }
 
@@ -33,7 +36,11 @@ func (m *NatsManager) StartHealthCheckListener() error {
 		return err
 	}
 
-	m.listenerChan = make(chan int32)
+	workerHealth, err := m.client.ChanSubscribe("worker_health")
+	if err != nil {
+		return err
+	}
+
 	go func() {
 		for {
 			select {
@@ -41,8 +48,22 @@ func (m *NatsManager) StartHealthCheckListener() error {
 				healthMsg := &pbd.HealthCheckStatus{}
 				json.Unmarshal(msg.Data, healthMsg)
 
-				//log.Printf("[Discord Health] %+v", healthMsg)
-			case <-m.listenerChan:
+				m.state.healthMonitor.UpdateListenerHealthStatus(healthMsg)
+			case <-m.shutdownChan:
+				return
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case msg := <-workerHealth:
+				healthMsg := &pbd.HealthCheckStatus{}
+				json.Unmarshal(msg.Data, healthMsg)
+
+				m.state.healthMonitor.UpdateWorkerHealthStatus(healthMsg)
+			case <-m.shutdownChan:
 				return
 			}
 		}
@@ -55,7 +76,7 @@ func (m *NatsManager) NotifyCommandConfigChange(updatedCommandDefinitions []*Com
 	protoDefinitions := convertToProtoCommandDefinitions(updatedCommandDefinitions)
 
 	natsUpdate := &pbm.UpdatedCommandConfigurations{
-		Timestamp:          mapToProtoTimestamp(time.Now().UTC()),
+		Timestamp:          MapToProtoTimestamp(time.Now().UTC()),
 		CommandDefinitions: protoDefinitions,
 	}
 
@@ -63,9 +84,7 @@ func (m *NatsManager) NotifyCommandConfigChange(updatedCommandDefinitions []*Com
 }
 
 func (m *NatsManager) Shutdown() {
-	if m.listenerChan != nil {
-		m.listenerChan <- 0
-	}
+	m.shutdownChan <- 0
 	m.client.Shutdown()
 }
 
@@ -82,7 +101,7 @@ func convertToProtoCommandDefinitions(commandDefinitions []*CommandDefinition) [
 			PermissionLevel:      mapToNatsPermissionLevel(def.PermissionLevel),
 			ParameterDefinitions: mapToNatsParameterDefinition(def.ParameterDefinitions),
 			LastModifiedUserID:   def.LastModifiedUserID,
-			LastModifiedDateUtc:  mapToProtoTimestamp(def.LastModifiedDateUtc),
+			LastModifiedDateUtc:  MapToProtoTimestamp(def.LastModifiedDateUtc),
 		}
 		protoDefinitions = append(protoDefinitions, newDef)
 	}

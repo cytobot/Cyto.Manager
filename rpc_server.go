@@ -11,18 +11,20 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewRpcServer(repository *CommandRepository) *grpc.Server {
+type rpcServer struct {
+	pb.UnimplementedManagerServer
+	repository    *CommandRepository
+	healthMonitor *healthMonitor
+}
+
+func NewRpcServer(repository *CommandRepository, healthMonitor *healthMonitor) *grpc.Server {
 	rpcServer := &rpcServer{
-		repository: repository,
+		repository:    repository,
+		healthMonitor: healthMonitor,
 	}
 	server := grpc.NewServer()
 	pb.RegisterManagerServer(server, rpcServer)
 	return server
-}
-
-type rpcServer struct {
-	pb.UnimplementedManagerServer
-	repository *CommandRepository
 }
 
 func (s *rpcServer) GetCommandDefinitions(ctx context.Context, req *empty.Empty) (*pb.CommandDefinitionList, error) {
@@ -44,7 +46,7 @@ func (s *rpcServer) GetCommandDefinitions(ctx context.Context, req *empty.Empty)
 			PermissionLevel:      mapToProtoPermissionLevel(def.PermissionLevel),
 			ParameterDefinitions: mapToProtoParameterDefinition(def.ParameterDefinitions),
 			LastModifiedUserID:   def.LastModifiedUserID,
-			LastModifiedDateUtc:  mapToProtoTimestamp(def.LastModifiedDateUtc),
+			LastModifiedDateUtc:  MapToProtoTimestamp(def.LastModifiedDateUtc),
 		}
 		protoCommandDefinition = append(protoCommandDefinition, pDef)
 	}
@@ -62,9 +64,30 @@ func (s *rpcServer) SetGuildCommandConfiguration(ctx context.Context, req *pb.Gu
 	return nil, nil
 }
 
-func mapToProtoTimestamp(timeValue time.Time) *timestamp.Timestamp {
+func (s *rpcServer) GetWorkerHealthChecks(ctx context.Context, req *empty.Empty) (*pb.HealthCheckStatusList, error) {
+	statusList := s.healthMonitor.GetAllWorkerStatus()
+
+	return &pb.HealthCheckStatusList{
+		HealthChecks: statusList,
+	}, nil
+}
+
+func (s *rpcServer) GetListenerHealthChecks(ctx context.Context, req *empty.Empty) (*pb.HealthCheckStatusList, error) {
+	statusList := s.healthMonitor.GetAllListenerStatus()
+
+	return &pb.HealthCheckStatusList{
+		HealthChecks: statusList,
+	}, nil
+}
+
+func MapToProtoTimestamp(timeValue time.Time) *timestamp.Timestamp {
 	protoTimestamp, _ := ptypes.TimestampProto(timeValue)
 	return protoTimestamp
+}
+
+func MapFromProtoTimestamp(ts *timestamp.Timestamp) time.Time {
+	timeValue, _ := ptypes.Timestamp(ts)
+	return timeValue
 }
 
 func mapToProtoPermissionLevel(permissionLevel string) pb.CommandDefinition_PermissionLevel {
