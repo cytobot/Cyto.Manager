@@ -73,5 +73,16 @@ func getInitialCommandDefinitions() []*CommandDefinition {
 			LastModifiedDateUtc:  time.Now().UTC(),
 			LastModifiedUserID:   "",
 		},
+		&CommandDefinition{
+			CommandID:            "twanswate",
+			Enabled:              true,
+			Unlisted:             false,
+			Description:          "Twanswate the previous message uwu",
+			Triggers:             []string{"twanswate"},
+			PermissionLevel:      "USER",
+			ParameterDefinitions: nil,
+			LastModifiedDateUtc:  time.Now().UTC(),
+			LastModifiedUserID:   "",
+		},
 	}
 }
